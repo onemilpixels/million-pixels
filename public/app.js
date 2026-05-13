@@ -7,38 +7,18 @@ const canvas = document.getElementById('grid');
 const ctx = canvas.getContext('2d', { alpha: false });
 ctx.imageSmoothingEnabled = false;
 
-// Pricing tiers (mirror of server, for live display only — server is authoritative)
+// Pricing: FLAT $1 per pixel (100 cents)
 const TIERS = [
-  { threshold: 1000,    cents: 1   },
-  { threshold: 2000,    cents: 5   },
-  { threshold: 3000,    cents: 10  },
-  { threshold: 5000,    cents: 25  },
-  { threshold: 10000,   cents: 50  },
-  { threshold: 25000,   cents: 100 },
-  { threshold: 50000,   cents: 150 },
-  { threshold: 100000,  cents: 200 },
-  { threshold: 250000,  cents: 250 },
-  { threshold: 500000,  cents: 300 },
-  { threshold: 750000,  cents: 350 },
-  { threshold: 1000000, cents: 400 },
+  { threshold: 1000000, cents: 100 },
 ];
 function currentTier(sold) {
-  for (const t of TIERS) if (sold < t.threshold) return t;
-  return TIERS[TIERS.length - 1];
+  return TIERS[0]; // Always $1.00
 }
 function nextTier(sold) {
-  const i = TIERS.findIndex(t => sold < t.threshold);
-  return i >= 0 && i < TIERS.length - 1 ? TIERS[i + 1] : null;
+  return null; // No next tier, price stays at $1.00
 }
 function quote(sold, qty) {
-  let remaining = qty, cursor = sold, total = 0;
-  for (const t of TIERS) {
-    if (cursor >= t.threshold) continue;
-    const take = Math.min(t.threshold - cursor, remaining);
-    if (take > 0) { total += take * t.cents; remaining -= take; cursor += take; if (!remaining) break; }
-  }
-  if (remaining) total += remaining * 400;
-  return total;
+  return qty * 100; // $1.00 per pixel
 }
 function bundleDiscount(qty) {
   if (qty >= 10000) return 2500;
