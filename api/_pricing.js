@@ -1,51 +1,20 @@
 // Canonical pricing per revenue/01-PRICING-MODEL.md
-// Tier-based: price rises as more pixels are sold.
+// FLAT PRICING: $1 per pixel (100 cents)
+
+const PRICE_PER_PIXEL_CENTS = 100; // $1.00
 
 export const TIERS = [
-  { threshold: 1000,    price_cents: 1   },   // $0.01
-  { threshold: 2000,    price_cents: 5   },   // $0.05
-  { threshold: 3000,    price_cents: 10  },   // $0.10
-  { threshold: 5000,    price_cents: 25  },   // $0.25
-  { threshold: 10000,   price_cents: 50  },   // $0.50
-  { threshold: 25000,   price_cents: 100 },   // $1.00
-  { threshold: 50000,   price_cents: 150 },   // $1.50
-  { threshold: 100000,  price_cents: 200 },   // $2.00
-  { threshold: 250000,  price_cents: 250 },   // $2.50
-  { threshold: 500000,  price_cents: 300 },   // $3.00
-  { threshold: 750000,  price_cents: 350 },   // $3.50
-  { threshold: 1000000, price_cents: 400 },   // $4.00
+  { threshold: 1000000, price_cents: 100 },   // $1.00 (flat)
 ];
 
 export function currentTierPrice(soldCount) {
-  for (const t of TIERS) {
-    if (soldCount < t.threshold) return t.price_cents;
-  }
-  return 400;
+  return PRICE_PER_PIXEL_CENTS; // Always $1.00
 }
 
-// Compute cost for buying `qty` more pixels when `soldCount` are already sold,
-// rolling across tier boundaries.
+// Compute cost for buying `qty` more pixels at flat $1 each
 export function quotePixels(soldCount, qty) {
-  let remaining = qty;
-  let cursor = soldCount;
-  let totalCents = 0;
-  const breakdown = []; // [{ tier_price_cents, count }]
-  for (const t of TIERS) {
-    if (cursor >= t.threshold) continue;
-    const room = t.threshold - cursor;
-    const take = Math.min(room, remaining);
-    if (take > 0) {
-      totalCents += take * t.price_cents;
-      breakdown.push({ tier_price_cents: t.price_cents, count: take });
-      remaining -= take;
-      cursor += take;
-      if (remaining === 0) break;
-    }
-  }
-  if (remaining > 0) {
-    totalCents += remaining * 400;
-    breakdown.push({ tier_price_cents: 400, count: remaining });
-  }
+  const totalCents = qty * PRICE_PER_PIXEL_CENTS;
+  const breakdown = [{ tier_price_cents: PRICE_PER_PIXEL_CENTS, count: qty }];
   return { totalCents, breakdown };
 }
 
