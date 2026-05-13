@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Million Pixels — own a piece of the internet</title>
+<meta name="description" content="Buy a pixel for as little as 1¢. 1,000,000 pixels. Forever yours.">
+<meta property="og:title" content="Million Pixels">
+<meta property="og:description" content="Buy a pixel for as little as 1¢. Own a piece of the internet.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2300d4ff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/style.css">
+<script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <span class="logo"></span>
+    <h1>Million Pixels</h1>
+  </div>
+  <nav>
+    <button data-tab="grid"   class="tab active">Grid</button>
+    <button data-tab="board"  class="tab">Leaderboard</button>
+    <button data-tab="referral" class="tab">Referral</button>
+    <button data-tab="about"  class="tab">About</button>
+  </nav>
+  <div class="stats" id="topStats">
+    <span><b id="statSold">—</b> sold</span>
+    <span><b id="statRevenue">$—</b> raised</span>
+    <span class="price-pill">Now: <b id="statPrice">$—</b>/px</span>
+  </div>
+</header>
+
+<main>
+  <section id="tab-grid" class="panel active">
+    <div class="grid-col">
+      <div class="ticker" id="priceTicker">Loading pricing…</div>
+      <div class="grid-wrap">
+        <canvas id="grid" width="1000" height="1000" aria-label="pixel grid"></canvas>
+        <div id="hoverInfo" class="hover-info" hidden></div>
+        <div class="zoom-controls">
+          <button id="btnZoomIn"  title="Zoom in">＋</button>
+          <button id="btnZoomOut" title="Zoom out">－</button>
+          <button id="btnFit"     title="Fit">⤢</button>
+        </div>
+      </div>
+      <p class="hint">Scroll to zoom · Shift+drag to pan · Click to select · Click an owned pixel to visit its link.</p>
+    </div>
+    <aside class="sidebar">
+      <h2 id="sideTitle">Pick a pixel</h2>
+      <p class="hint" id="sideHint">Click anywhere on the grid. Up to 10,000 pixels per order. Bundle discounts auto-apply.</p>
+      <div id="selectionPanel" hidden>
+        <div class="row"><label>Pixels selected</label><b id="selCount">0</b></div>
+        <div class="row"><label>Subtotal</label><b id="selSubtotal">$0.00</b></div>
+        <div class="row"><label>Bundle discount</label><b id="selDiscount">—</b></div>
+        <div class="row total"><label>Total</label><b id="selPrice">$0.00</b></div>
+        <label class="field">
+          <span>Color</span>
+          <input type="color" id="inpColor" value="#00d4ff">
+        </label>
+        <label class="field">
+          <span>Link (optional)</span>
+          <input type="url" id="inpLink" placeholder="https://your-site.com">
+        </label>
+        <label class="field">
+          <span>Display name</span>
+          <input type="text" id="inpName" placeholder="Anonymous" maxlength="40">
+        </label>
+        <label class="field">
+          <span>Email (for receipt)</span>
+          <input type="email" id="inpEmail" required placeholder="you@example.com">
+        </label>
+        <button id="btnBuy" class="primary">Buy now →</button>
+        <button id="btnClear" class="ghost">Clear selection</button>
+        <p class="tiny">Secure checkout via <a href="https://stripe.com" target="_blank" rel="noopener">Stripe</a>. We never see your card.</p>
+      </div>
+    </aside>
+  </section>
+
+  <section id="tab-board" class="panel">
+    <h2>Top buyers</h2>
+    <table id="leaderboard">
+      <thead><tr><th>#</th><th>Name</th><th>Pixels</th><th>Spent</th></tr></thead>
+      <tbody><tr><td colspan="4" class="muted">Loading…</td></tr></tbody>
+    </table>
+  </section>
+
+  <section id="tab-referral" class="panel">
+    <h2>Earn 10% on every pixel you refer</h2>
+    <p>Share your link. Anyone who buys after clicking it earns you 10% commission, paid monthly. Top referrers earn up to 20%.</p>
+    <div class="referral-box">
+      <label>Your email</label>
+      <input type="email" id="refEmail" placeholder="you@example.com">
+      <button id="btnGetLink" class="primary">Get my link</button>
+    </div>
+    <div id="refResult" hidden>
+      <div class="ref-link"><code id="refUrl"></code><button id="btnCopy">Copy</button></div>
+      <div class="ref-stats">
+        <div><b id="refClicks">0</b><span>clicks</span></div>
+        <div><b id="refConv">0</b><span>conversions</span></div>
+        <div><b id="refEarned">$0.00</b><span>earned</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-about" class="panel">
+    <h2>What is Million Pixels?</h2>
+    <p>A 1,000,000-pixel canvas. Buy one. Pick a color. Add a link. Leave your mark on the internet — forever.</p>
+    <p>Inspired by Alex Tew's <em>Million Dollar Homepage</em> (2005), rebuilt for 2026 with proper crypto-era payment rails.</p>
+    <h3>Pricing tiers</h3>
+    <p>Price rises as more pixels sell. Early buyers pay <b>$0.01</b>; final tier is <b>$4.00</b>. Bundle discounts up to <b>25% off</b>.</p>
+    <h3>Why buy?</h3>
+    <ul>
+      <li><b>Permanent backlink</b> — SEO value + perpetual traffic</li>
+      <li><b>Cultural artifact</b> — be on the canvas alongside everyone else</li>
+      <li><b>Referral commissions</b> — 10% on everyone you bring</li>
+      <li><b>Leaderboard</b> — biggest buyers get featured</li>
+    </ul>
+    <p class="muted">Built in 48 hours. Payments via <a href="https://stripe.com" target="_blank" rel="noopener">Stripe</a>.</p>
+  </section>
+</main>
+
+<footer>
+  © 2026 Million Pixels · <a href="#" data-tab="about">About</a> · <a href="mailto:hi@millionpixels.app">Contact</a>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>
