@@ -7,7 +7,7 @@
 <meta name="description" content="Buy a pixel for as little as 1¢. 1,000,000 pixels. Forever yours.">
 <meta property="og:title" content="Million Pixels">
 <meta property="og:description" content="Buy a pixel for as little as 1¢. Own a piece of the internet.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2300d4ff'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23f3ece1'/%3E%3Crect x='2' y='2' width='12' height='12' fill='%2318140f'/%3E%3Crect x='6' y='6' width='8' height='8' fill='%23c0392b'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="/style.css">
 <script src="https://js.stripe.com/v3/"></script>
 </head>
@@ -24,9 +24,9 @@
     <button data-tab="about"  class="tab">About</button>
   </nav>
   <div class="stats" id="topStats">
-    <span><b id="statSold">—</b> sold</span>
-    <span><b id="statRevenue">$—</b> raised</span>
-    <span class="price-pill">Now: <b id="statPrice">$—</b>/px</span>
+    <span data-label="Pixels sold"><b id="statSold">—</b></span>
+    <span data-label="Raised"><b id="statRevenue">$—</b></span>
+    <span class="price-pill">Per&nbsp;px <b id="statPrice">$—</b></span>
   </div>
 </header>
 
@@ -43,11 +43,11 @@
           <button id="btnFit"     title="Fit">⤢</button>
         </div>
       </div>
-      <p class="hint">Scroll to zoom · Shift+drag to pan · Click to select · Click an owned pixel to visit its link.</p>
+      <p class="hint">Scroll to zoom. Shift-drag to pan. Click to select. Click an owned pixel to follow its link.</p>
     </div>
     <aside class="sidebar">
-      <h2 id="sideTitle">Pick a pixel</h2>
-      <p class="hint" id="sideHint">Click anywhere on the grid. Up to 10,000 pixels per order. Bundle discounts auto-apply.</p>
+      <h2 id="sideTitle">Stake your claim.</h2>
+      <p class="hint" id="sideHint">Click anywhere on the canvas. Up to 10,000 pixels per order — bundle discounts apply automatically.</p>
       <div id="selectionPanel" hidden>
         <div class="row"><label>Pixels selected</label><b id="selCount">0</b></div>
         <div class="row"><label>Subtotal</label><b id="selSubtotal">$0.00</b></div>
@@ -55,7 +55,7 @@
         <div class="row total"><label>Total</label><b id="selPrice">$0.00</b></div>
         <label class="field">
           <span>Color</span>
-          <input type="color" id="inpColor" value="#00d4ff">
+          <input type="color" id="inpColor" value="#c0392b">
         </label>
         <label class="field">
           <span>Link (optional)</span>
