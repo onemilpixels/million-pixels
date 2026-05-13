@@ -340,6 +340,82 @@ main {
   will-change: transform;
 }
 
+/* Transparent overlay canvas sits on top of #grid; gets identical transform. */
+.overlay-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  will-change: transform;
+  z-index: 2;
+}
+
+/* Mini-map: 200x200 ticket in the top-right of the canvas plate. */
+.minimap-wrap {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 6;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 4px;
+  user-select: none;
+}
+.minimap-label {
+  display: block;
+  text-align: center;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.22em;
+  padding: 3px 6px;
+  margin: 0 0 3px;
+  font-weight: 700;
+}
+#minimap {
+  display: block;
+  width: 160px;
+  height: 160px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  cursor: crosshair;
+  background: #fff;
+  border: 1px solid var(--paper-edge);
+}
+@media (min-width: 1100px) {
+  #minimap { width: 180px; height: 180px; }
+}
+@media (max-width: 760px) {
+  .minimap-wrap { top: 8px; right: 8px; padding: 3px; box-shadow: 2px 2px 0 var(--ink); }
+  #minimap { width: 84px; height: 84px; }
+  .minimap-label { font-size: 0.5rem; padding: 1px 4px; }
+}
+
+/* Coordinate badge: small ticket-style readout in the bottom-left of the plate. */
+.coord-badge {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 5;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 4px 8px;
+  border: 1px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--mark);
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 .hover-info {
   position: absolute;
   pointer-events: none;
@@ -375,7 +451,7 @@ main {
 .zoom-controls {
   position: absolute;
   right: 12px;
-  top: 12px;
+  bottom: 12px;
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -400,6 +476,240 @@ main {
 }
 .zoom-controls button:last-child { border-bottom: 0; }
 .zoom-controls button:hover { background: var(--mark); color: var(--paper); }
+.zoom-controls button.on,
+.zoom-controls button[aria-pressed="true"] { background: var(--mark); color: var(--paper); }
+
+/* =========================================================================
+   NAVIGATOR — search bar + jump-to-coordinates strip
+   Sits between the ticker and the canvas. Reads like a card-catalog header.
+   ========================================================================= */
+.navigator {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 6px 0 10px;
+  padding: 10px 12px;
+  background: var(--paper-2);
+  border: 1px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  margin-right: 4px;
+}
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nav-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  min-width: 44px;
+}
+
+.nav-search input[type="search"] {
+  flex: 1 1 220px;
+  min-width: 140px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 8px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.86rem;
+  outline: 0;
+  transition: box-shadow .12s ease, background .12s ease;
+}
+.nav-search input[type="search"]:focus {
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--mark);
+}
+.nav-search input[type="search"]::placeholder { color: var(--ink-3); }
+/* Hide native clear button for consistency */
+.nav-search input[type="search"]::-webkit-search-cancel-button { display: none; }
+
+.nav-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+  min-width: 76px;
+  text-align: right;
+}
+
+.nav-x {
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: background .12s ease, color .12s ease;
+}
+.nav-x:hover { background: var(--mark); color: var(--paper); }
+
+.nav-jump input[type="number"] {
+  width: 76px;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 7px 9px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.84rem;
+  outline: 0;
+  font-variant-numeric: tabular-nums;
+  transition: box-shadow .12s ease, background .12s ease;
+  /* Hide spinners */
+  -moz-appearance: textfield;
+}
+.nav-jump input[type="number"]::-webkit-outer-spin-button,
+.nav-jump input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.nav-jump input[type="number"]:focus {
+  background: #fff;
+  box-shadow: 3px 3px 0 var(--mark);
+}
+
+.nav-go {
+  background: var(--ink);
+  color: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 7px 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--mark);
+  transition: transform .08s ease, box-shadow .08s ease, background .12s ease;
+}
+.nav-go:hover {
+  background: var(--mark);
+  border-color: var(--mark);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.nav-go:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--mark);
+}
+
+.nav-presets {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.nav-preset {
+  background: var(--paper);
+  color: var(--ink-2);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 5px 9px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
+.nav-preset:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Search results: card-catalog stub */
+.search-results {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 6px 0 0;
+  border-top: 1px dotted var(--paper-edge);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.search-results li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--ink-2);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .1s ease, border-color .1s ease, color .1s ease;
+}
+.search-results li[data-x]:hover {
+  background: var(--paper);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+.search-results li b {
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.82rem;
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 50%;
+}
+.search-results .sr-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--ink);
+  flex: 0 0 auto;
+}
+.search-results .sr-coord {
+  margin-left: auto;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.search-results .sr-more {
+  cursor: default;
+  color: var(--ink-3);
+  font-style: italic;
+  font-family: 'Fraunces', serif;
+  font-size: 0.78rem;
+  border: 0;
+  padding-left: 6px;
+}
+.search-results .sr-more:hover {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Mobile: stack the navigator rows */
+@media (max-width: 760px) {
+  .navigator { padding: 8px 10px; box-shadow: 2px 2px 0 var(--ink); }
+  .nav-label { min-width: 36px; font-size: 0.6rem; }
+  .nav-search input[type="search"] { flex-basis: 100%; }
+  .nav-count { text-align: left; min-width: 0; }
+  .nav-presets { margin-left: 0; width: 100%; }
+  .nav-jump input[type="number"] { width: 64px; }
+  .coord-badge { font-size: 0.62rem; padding: 3px 6px; }
+}
 
 /* =========================================================================
    SIDEBAR — "ORDER FORM"

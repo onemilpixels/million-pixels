@@ -34,16 +34,52 @@
   <section id="tab-grid" class="panel active">
     <div class="grid-col">
       <div class="ticker" id="priceTicker">Loading pricing…</div>
+
+      <!-- Navigator: search + jump + grid toggle -->
+      <div class="navigator" role="region" aria-label="Canvas navigator">
+        <div class="nav-row nav-search">
+          <label for="searchInput" class="nav-label">Find</label>
+          <input id="searchInput" type="search" placeholder="Owner name or link…" autocomplete="off" spellcheck="false">
+          <span id="searchCount" class="nav-count" aria-live="polite">—</span>
+          <button id="btnSearchClear" class="nav-x" title="Clear search" hidden>×</button>
+        </div>
+        <div class="nav-row nav-jump">
+          <label for="jumpX" class="nav-label">Jump</label>
+          <input id="jumpX" type="number" min="0" max="999" placeholder="X" inputmode="numeric">
+          <input id="jumpY" type="number" min="0" max="999" placeholder="Y" inputmode="numeric">
+          <button id="btnJump" class="nav-go" title="Go to coordinates">Go</button>
+          <span class="nav-presets">
+            <button data-preset="tl"     class="nav-preset" title="Top-left (0,0)">TL</button>
+            <button data-preset="center" class="nav-preset" title="Center (500,500)">Center</button>
+            <button data-preset="tr"     class="nav-preset" title="Top-right (999,0)">TR</button>
+            <button data-preset="bl"     class="nav-preset" title="Bottom-left (0,999)">BL</button>
+            <button data-preset="br"     class="nav-preset" title="Bottom-right (999,999)">BR</button>
+            <button data-preset="random" class="nav-preset" title="Random pixel">Random</button>
+          </span>
+        </div>
+        <ul id="searchResults" class="search-results" hidden></ul>
+      </div>
+
       <div class="grid-wrap">
-        <canvas id="grid" width="1000" height="1000" aria-label="pixel grid"></canvas>
+        <canvas id="grid"    width="1000" height="1000" aria-label="pixel grid"></canvas>
+        <canvas id="overlay" width="1000" height="1000" class="overlay-canvas" aria-hidden="true"></canvas>
         <div id="hoverInfo" class="hover-info" hidden></div>
+        <div id="coordBadge" class="coord-badge" title="Center of viewport">500, 500 · 1.0×</div>
+
+        <!-- Mini-map: 200x200 downsample, top-right of the plate. -->
+        <div class="minimap-wrap" aria-label="Mini-map">
+          <div class="minimap-label">MAP</div>
+          <canvas id="minimap" width="200" height="200" title="Click to jump"></canvas>
+        </div>
+
         <div class="zoom-controls">
-          <button id="btnZoomIn"  title="Zoom in">＋</button>
-          <button id="btnZoomOut" title="Zoom out">－</button>
-          <button id="btnFit"     title="Fit">⤢</button>
+          <button id="btnZoomIn"  title="Zoom in (+)">＋</button>
+          <button id="btnZoomOut" title="Zoom out (−)">－</button>
+          <button id="btnFit"     title="Fit (0)">⤢</button>
+          <button id="btnGridToggle" title="Toggle grid (G)" aria-pressed="false">▦</button>
         </div>
       </div>
-      <p class="hint">Scroll to zoom. Shift-drag to pan. Click to select. Click an owned pixel to follow its link.</p>
+      <p class="hint">Drag to pan · scroll or +/− to zoom · click to select · / to search · R for random · click an owned pixel to visit it.</p>
     </div>
     <aside class="sidebar">
       <h2 id="sideTitle">Stake your claim.</h2>
